@@ -1,0 +1,188 @@
+Experiment 9: " Full-Featured Calculator with Layout Design “
+
+Objective: To learn how to build a complete, working calculator combining arithmetic logic with advanced layout techniques using GridLayout and LinearLayout.
+
+Question: Build a complete calculator app. Design its entire screen using GridLayout for all the number buttons (0-9) and operation buttons (+, -, *, /, equals, clear). Use a LinearLayout for the display area at the top where numbers are typed and results are shown. Make sure the calculator can perform all basic math operations correctly, and displays the answers in the top display area.
+
+------------------------------------------------------------------------------------------------
+
+MainActivity.java
+
+package com.example.calculator;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private TextView resultTextView;
+    private StringBuilder currentInput;
+    private Double operand1 = null;
+    private String pendingOperation = "=";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        resultTextView = findViewById(R.id.resultTextView);
+        currentInput = new StringBuilder();
+
+        int[] buttonIds = {
+                R.id.button0, R.id.button1, R.id.button2, R.id.button3, R.id.button4,
+                R.id.button5, R.id.button6, R.id.button7, R.id.button8, R.id.button9,
+                R.id.buttonDot, R.id.buttonAdd, R.id.buttonSubtract, R.id.buttonMultiply,
+                R.id.buttonDivide, R.id.buttonEquals, R.id.buttonClear
+        };
+        for (int id : buttonIds) {
+            findViewById(id).setOnClickListener(this);
+        }
+        updateDisplay();
+    }
+    @Override
+    public void onClick(View view) {
+        Button b = (Button) view;
+        String buttonText = b.getText().toString();
+        int id = view.getId();
+        if (id == R.id.buttonClear) {
+            clear();
+        } else if (id == R.id.buttonAdd || id == R.id.buttonSubtract || id == R.id.buttonMultiply || id == R.id.buttonDivide || id == R.id.buttonEquals) {
+            performOperation(buttonText);
+        } else {
+            appendInput(buttonText);
+        }
+        updateDisplay();
+    }
+    private void appendInput(String text) {
+        if (text.equals(".") && currentInput.toString().contains(".")) {
+            return;
+        }
+        currentInput.append(text);
+    }
+    private void updateDisplay() {
+        if (currentInput.length() == 0) {
+            resultTextView.setText("0");
+        } else {
+            resultTextView.setText(currentInput.toString());
+        }
+    }
+    @SuppressLint("SetTextI18n")
+    private void performOperation(String operation) {
+        if (currentInput.length() == 0 && !operation.equals("=")) {
+            if(operand1 != null) {
+                pendingOperation = operation;
+            }
+            return;
+        }
+
+        double value = 0;
+        if (currentInput.length() > 0) {
+            value = Double.parseDouble(currentInput.toString());
+        }
+
+        currentInput.setLength(0);
+        if (operand1 == null) {
+            operand1 = value;
+        } else {
+            switch (pendingOperation) {
+                case "/":
+                    if (value == 0) {
+                        resultTextView.setText("Error");
+                        clear();
+                        return;
+                    } else {
+                        operand1 /= value;
+                    }
+                    break;
+                case "*":
+                    operand1 *= value;
+                    break;
+                case "-":
+                    operand1 -= value;
+                    break;
+                case "+":
+                    operand1 += value;
+                    break;
+                case "=":
+                    operand1 = value;
+                    break;
+            }
+        }
+        resultTextView.setText(String.valueOf(operand1));
+        pendingOperation = operation;
+
+        if (operation.equals("=")) {
+
+            currentInput.append(operand1);
+            operand1 = null;
+        }
+    }
+    private void clear() {
+        operand1 = null;
+        pendingOperation = "=";
+        currentInput.setLength(0);
+    }
+}
+
+------------------------------------------------------------------------------------------------
+
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="410dp"
+        android:layout_weight="1"
+        android:gravity="bottom|end"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/resultTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="0"
+            android:textSize="48sp" />
+    </LinearLayout>
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:rowCount="5">
+        <Button android:id="@+id/buttonClear" android:text="C" />
+        <Button android:id="@+id/buttonDivide" android:text="/" />
+        <Button android:id="@+id/buttonMultiply" android:text="*" />
+        <Button android:id="@+id/buttonSubtract" android:text="-"/>
+
+        <Button android:id="@+id/button7" android:text="7" />
+        <Button android:id="@+id/button8" android:text="8" />
+        <Button android:id="@+id/button9" android:text="9"/>
+        <Button android:id="@+id/buttonAdd" android:text="+" android:layout_rowSpan="2" android:layout_gravity="fill_vertical"/>
+
+        <Button android:id="@+id/button4" android:text="4" />
+        <Button android:id="@+id/button5" android:text="5" />
+        <Button android:id="@+id/button6" android:text="6" />
+
+        <Button android:id="@+id/button1" android:text="1"/>
+        <Button android:id="@+id/button2" android:text="2"/>
+        <Button android:id="@+id/button3" android:text="3" />
+        <Button android:id="@+id/buttonEquals" android:text="=" android:layout_rowSpan="2" android:layout_gravity="fill_vertical"/>
+
+        <Button android:id="@+id/button0" android:text="0" android:layout_columnSpan="2" android:layout_gravity="fill_horizontal"/>
+        <Button android:id="@+id/buttonDot" android:text="."/>
+    </GridLayout>
+</LinearLayout>
