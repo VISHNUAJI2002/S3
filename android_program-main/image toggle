@@ -1,0 +1,104 @@
+Experiment 8: "Image Toggle"
+Objective: To learn how to use FrameLayout to stack UI elements and toggle their visibility.
+Question: Develop an application that toggles an image using FrameLayout. When a button is clicked, make one image disappear and another appear in its place.
+
+------------------------------------------------------------------------------------------------
+
+MainActivity.java
+
+
+package com.example.image_toggle;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+
+public class MainActivity extends AppCompatActivity {
+    private ImageView imageView1;
+    private ImageView imageView2;
+    private ImageView imageView3;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        imageView1 = findViewById(R.id.imageView1);
+        imageView2 = findViewById(R.id.imageView2);
+        imageView3 = findViewById(R.id.imageView3);
+        Button toggleButton = findViewById(R.id.toggleButton);
+        toggleButton.setOnClickListener(v -> {
+            if (imageView1.getVisibility() == View.VISIBLE) {
+                imageView1.setVisibility(View.GONE);
+                imageView2.setVisibility(View.VISIBLE);
+            } else if(imageView2.getVisibility() == View.VISIBLE){
+                imageView2.setVisibility(View.GONE);
+                imageView3.setVisibility(View.VISIBLE);
+            } else{
+                imageView3.setVisibility(View.GONE);
+                imageView1.setVisibility(View.VISIBLE);
+            }
+        });
+    }
+}
+------------------------------------------------------------------------------------------------
+
+activity_main.xml
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Image Toggler"
+        android:textAlignment="center"
+        android:textSize="40dp"
+        android:textColor="#9C27B0"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:src="@drawable/image1"
+            android:visibility="visible" />
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:src="@drawable/image2"
+            android:visibility="gone" />
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="350dp"
+            android:layout_height="350dp"
+            android:src="@drawable/image2"
+            android:visibility="gone" />
+    </FrameLayout>
+    <Button
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/toggle_image" />
+
+</LinearLayout>
+
+
+
