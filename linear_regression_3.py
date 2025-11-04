@@ -1,4 +1,4 @@
-#Without reshaping , remaining same as 2.py
+#Without reshaping , remaining same as linear_regression_2.py
 
 import numpy as np
 import pandas as pd
@@ -50,4 +50,5 @@ r2=r2_score(y_test,Ypred)
 print('r2 score : ',r2*100,'%')
 mse=mean_squared_error(y_test,Ypred)
 mae=mean_absolute_error(y_test,Ypred)
+
 print('Mean squared error: ',mse,'\nMean absolute error: ',mae)
