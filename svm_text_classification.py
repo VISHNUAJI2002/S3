@@ -1,4 +1,7 @@
-#SIMPLE PROGRAM
+'''
+Program to implement text classification using Support Vector Machine
+'''
+
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
