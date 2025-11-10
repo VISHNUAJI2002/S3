@@ -58,9 +58,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
 
     EditText etName, etEmail;
@@ -79,53 +76,50 @@ public class MainActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.btnRegister);
         tvResult = findViewById(R.id.tvResult);
 
-        // Simple gender list with a prompt item
-        List<String> genders = Arrays.asList("Select gender", "Male", "Female", "Other");
+        // Simple array for spinner
+        String[] genders = {"Select gender", "Male", "Female", "Other"};
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, genders
+                this,
+                android.R.layout.simple_spinner_item,
+                genders
         );
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGender.setAdapter(adapter);
 
-        btnRegister.setOnClickListener(v -> validateAndShow());
+        // Normal click listener
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                validateAndShow();
+            }
+        });
     }
 
     private void validateAndShow() {
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
-        String gender = spinnerGender.getSelectedItem() == null
-                ? "" : spinnerGender.getSelectedItem().toString();
-
-        boolean ok = true;
+        String gender = spinnerGender.getSelectedItem().toString();
 
         if (name.isEmpty()) {
-            etName.setError("Name required");
-            ok = false;
-        } else {
-            etName.setError(null);
-        }
-
-        if (email.isEmpty()) {
-            etEmail.setError("Email required");
-            ok = false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            etEmail.setError("Invalid email");
-            ok = false;
-        } else {
-            etEmail.setError(null);
-        }
-
-        if (gender.equals("Select gender")) {
-            Toast.makeText(this, "Please select a gender", Toast.LENGTH_SHORT).show();
-            ok = false;
-        }
-
-        if (!ok) {
-            tvResult.setVisibility(View.GONE);
+            etName.setError("Enter name");
             return;
         }
 
-        String result = "Name: " + name + "\nEmail: " + email + "\nGender: " + gender;
+        if (email.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etEmail.setError("Enter valid email");
+            return;
+        }
+
+        if (gender.equals("Select gender")) {
+            Toast.makeText(this, "Select gender", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String result = "Name: " + name +
+                "\nEmail: " + email +
+                "\nGender: " + gender;
+
         tvResult.setText(result);
         tvResult.setVisibility(View.VISIBLE);
     }
